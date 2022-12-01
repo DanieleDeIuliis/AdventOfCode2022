@@ -2,16 +2,14 @@ package day1
 
 import java.io.File
 
-fun maxCaloriesFirstElf(filename: String) : Int {
-    val input = File("src/main/resources/$filename").readText()
+fun maxCaloriesFirstElf(input: String) : Int {
     return input.split("\n\n").maxOf { it.toNumbers().sum() }
 }
 
 fun String.toNumbers() : List<Int> = this.split("\n").map(String::toInt)
 
 
-fun maxCaloriesFirstThreeElves(filename: String) : Int {
-    val input = File("src/main/resources/$filename").readText()
+fun maxCaloriesFirstThreeElves(input: String) : Int {
     val sums = input.split("\n\n").map { it.toNumbers().sum() }
     return sums.sorted().takeLast(3).sum()
 }
