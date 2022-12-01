@@ -5,19 +5,13 @@ import java.io.File
 private const val resources = "src/main/resources/"
 
 fun main() {
-    day1("inputDay1.txt")
+    executeWithInput("inputDay1.txt", ::maxCaloriesFirstElf, ::maxCaloriesFirstThreeElves)
 }
 
-private fun day1(filename: String) {
-    executeWithInput(filename) {
-        println(maxCaloriesFirstElf(it))
-        println(maxCaloriesFirstThreeElves(it))
-    }
-}
-
-private fun executeWithInput(filename: String, action: (String) -> Unit) {
+private fun executeWithInput(filename: String, part1Action: (String) -> Any, part2Action: (String) -> Any) {
     val input = readInput(filename)
-    action(input)
+    println(part1Action(input))
+    println(part2Action(input))
 }
 
 private fun readInput(filename: String): String {

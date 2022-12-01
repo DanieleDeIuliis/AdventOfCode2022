@@ -9,5 +9,4 @@ fun maxCaloriesFirstThreeElves(input: String) : Int {
     return sums.sorted().takeLast(3).sum()
 }
 
-
 fun String.toNumbers() : List<Int> = this.split("\n").map(String::toInt)
