@@ -7,6 +7,8 @@ enum class Hand(val value: Int) {
     PAPER(2),
     SCISSOR(3);
 
+    fun isBetterThan(other: Hand): Boolean = this == betterHand(other)
+
     companion object {
         fun fromLetter(letter: String): Hand {
             return when(letter) {

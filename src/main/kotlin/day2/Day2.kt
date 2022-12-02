@@ -31,15 +31,11 @@ object Day2 {
     }
 
     private fun computeResult(player: Hand, opponent: Hand) =
-        computePartialScore(player, opponent) + player.value
+        computePartialScore(player, opponent).value + player.value
 
-    private fun computePartialScore(player: Hand, opponent: Hand): Int {
-        if(player == opponent) return DRAW.value
+    private fun computePartialScore(player: Hand, opponent: Hand): Result {
+        if(player == opponent) return DRAW
 
-        return when (player) {
-            ROCK -> if (opponent == SCISSOR) WIN.value else LOSE.value
-            PAPER -> if (opponent == ROCK) WIN.value else LOSE.value
-            SCISSOR -> if (opponent == PAPER) WIN.value else LOSE.value
-        }
+        return if(player.isBetterThan(opponent)) WIN else LOSE
     }
 }
