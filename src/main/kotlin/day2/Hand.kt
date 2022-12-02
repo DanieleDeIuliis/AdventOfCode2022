@@ -16,5 +16,21 @@ enum class Hand(val value: Int) {
                 else -> throw IllegalArgumentException()
             }
         }
+
+        fun betterHand(other: Hand): Hand {
+            return when(other) {
+                ROCK -> PAPER
+                PAPER -> SCISSOR
+                SCISSOR -> ROCK
+            }
+        }
+
+        fun worseHand(other: Hand): Hand {
+            return when(other) {
+                ROCK -> SCISSOR
+                PAPER -> ROCK
+                SCISSOR -> PAPER
+            }
+        }
     }
 }
