@@ -10,7 +10,15 @@ object Day3 {
         }
     }
 
-    fun part2(input : String) : Int = 1
+    fun part2(input : String) : Int {
+        val rucksacks = input.split("\n")
+        return rucksacks.chunked(3).sumOf {
+            val badge = it.reduce { acc, current ->
+                acc.toSet().intersect(current.toSet()).joinToString()
+            }.single()
+            getPriority(badge)
+        }
+    }
 
     private fun getPriority(letter: Char) : Int{
         return when {

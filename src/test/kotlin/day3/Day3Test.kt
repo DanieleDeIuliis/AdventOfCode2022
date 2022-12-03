@@ -18,4 +18,19 @@ class Day3Test {
 
         assertThat(result).isEqualTo(157)
     }
+
+    @Test
+    fun `Should return sum of badges`() {
+        val input = """
+            vJrwpWtwJgWrhcsFMMfFFhFp
+            jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL
+            PmmdzqPrVvPwwTWBwg
+            wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn
+            ttgJtRGJQctTZtZT
+            CrZsJsPPZsGzwwsLwLmpwMDw
+        """.trimIndent()
+        val result = Day3.part2(input)
+
+        assertThat(result).isEqualTo(70)
+    }
 }
