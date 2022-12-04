@@ -14,13 +14,28 @@ object Day4 {
             }
     }
 
+    fun part2(input: String): Int {
+        val sections = input.split("\n")
+        return sections.count {
+            val (firstSectionsRange, secondSectionsRange) =
+                it.split(",")
+            val firstExtremes = firstSectionsRange.split("-")
+            val firstRange = firstExtremes.first().toInt() .. firstExtremes.last().toInt()
+            val secondExtremes = secondSectionsRange.split("-")
+            val secondRange = secondExtremes.first().toInt() .. secondExtremes.last().toInt()
+            firstRange.containsAny(secondRange)
+        }
+    }
+
     private fun IntRange.isContained(other: IntRange): Boolean {
         return this.all {
             other.contains(it)
         }
     }
 
-    fun part2(input: String): Int {
-        return 1
+    private fun IntRange.containsAny(other: IntRange): Boolean {
+        return this.any {
+            other.contains(it)
+        }
     }
 }
