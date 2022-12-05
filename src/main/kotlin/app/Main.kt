@@ -10,6 +10,7 @@ fun main() {
     //executeWithInput("inputDay3.txt", Day3::part1, Day3::part2)
     //executeWithInput("inputDay4.txt", Day4::part1, Day4::part2)
     executeWithInput("inputDay5.txt", Day5::part1, Day5::part2)
+
 }
 
 private fun executeWithInput(filename: String, part1Action: (String) -> Any, part2Action: (String) -> Any) {
