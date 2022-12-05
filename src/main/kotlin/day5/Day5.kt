@@ -16,6 +16,19 @@ object Day5 {
         return stacks.joinToString(separator = "") { it.popOrEmptyString() }
     }
 
+    fun part2(input: String): String {
+        val (textualLevels, textualMoves) = input.split("\n\n")
+        val stacks = createStacks(textualLevels)
+        val movements = parseMovements(textualMoves)
+        movements.forEach { movement ->
+            val cratesToMove = List(movement.amount) { stacks[movement.from].pop() }
+            cratesToMove.asReversed().forEach {
+                stacks[movement.to].push(it)
+            }
+        }
+        return stacks.joinToString(separator = "") { it.popOrEmptyString() }
+    }
+
     private fun Stack<String>.popOrEmptyString() = try {
         pop()
     } catch (e: EmptyStackException) {
@@ -35,20 +48,16 @@ object Day5 {
         val stacks = List(numberOfStacks) { Stack<String>() }
 
         levels.dropLast(1).asReversed().forEach {
-            val level = it.replace("\\s{4}".toRegex(), " [#]")
+            val level = it.replace("\\s{4}".toRegex(), " [#] ")
                 .replace("[\\[\\]]".toRegex(), "")
                 .trim()
-            level.split(" ").forEachIndexed { index, value ->
+            level.split("\\s+".toRegex()).forEachIndexed { index, value ->
                 if (value != "#") {
                     stacks[index].push(value)
                 }
             }
         }
         return stacks
-    }
-
-    fun part2(input: String): String {
-        return "0"
     }
 }
 
