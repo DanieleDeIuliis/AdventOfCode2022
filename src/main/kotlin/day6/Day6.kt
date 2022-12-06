@@ -2,16 +2,20 @@ package day6
 
 object Day6 {
     fun part1(input: String): Int {
-        repeat(input.length - 3) {
-            val distinctChars = input.subSequence(it, it + 4).toSet()
-            if(distinctChars.size == 4) {
-                return it + 4
+        return getEndOfMarker(input, 4)
+    }
+
+    private fun getEndOfMarker(input: String, markerSize: Int): Int {
+        repeat(input.length - markerSize - 1) {
+            val distinctChars = input.subSequence(it, it + markerSize).toSet()
+            if (distinctChars.size == markerSize) {
+                return it + markerSize
             }
         }
         return -1
     }
 
     fun part2(input: String): Int {
-        return 123456789
+        return getEndOfMarker(input, 14)
     }
 }
