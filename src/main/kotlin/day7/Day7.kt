@@ -3,6 +3,10 @@ package day7
 import day7.Type.DIRECTORY
 import day7.Type.FILE
 
+private const val SPACE_NEEDED = 30_000_000
+private const val TOTAL_AVAILABLE_SPACE = 70_000_000
+
+
 object Day7 {
     fun part1(input: String): Int {
         val commands = input.split("\n").drop(1)
@@ -58,8 +62,23 @@ object Day7 {
     }
 
     fun part2(input: String): Int {
-        return 912481248
+        val commands = input.split("\n").drop(1)
+        val root = buildTree(commands)
+        postOrderVisit(root)
+        val minSizeNeeded = SPACE_NEEDED - (TOTAL_AVAILABLE_SPACE - root.size)
+        val directories = mutableListOf<Int>()
+        findDirectorySize(root, minSizeNeeded, directories)
+        return directories.min()
     }
+
+    private fun findDirectorySize(node: Node, minSizeNeeded : Int, directories : MutableList<Int>) {
+        if(node.children.isEmpty()) return
+        if (node.type == DIRECTORY && node.size >= minSizeNeeded) {
+            directories.add(node.size)
+        }
+        node.children.forEach { findDirectorySize(it, minSizeNeeded, directories) }
+    }
+
 }
 
 data class Node(
