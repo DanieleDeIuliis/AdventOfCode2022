@@ -18,4 +18,19 @@ class Day8Test {
 
         assertThat(result).isEqualTo(21)
     }
+
+    @Test
+    fun `part 2`() {
+        val input = """
+            30373
+            25512
+            65332
+            33549
+            35390
+        """.trimIndent()
+
+        val result = Day8.part2(input)
+
+        assertThat(result).isEqualTo(8)
+    }
 }
