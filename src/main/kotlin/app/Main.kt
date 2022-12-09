@@ -1,5 +1,5 @@
 
-import day8.Day8
+import day9.Day9
 import java.io.File
 
 private const val resources = "src/main/resources/"
@@ -12,7 +12,8 @@ fun main() {
     //executeWithInput("inputDay5.txt", Day5::part1, Day5::part2)
     //executeWithInput("inputDay6.txt", Day6::part1, Day6::part2)
     //executeWithInput("inputDay7.txt", Day7::part1, Day7::part2)
-    executeWithInput("inputDay8.txt", Day8::part1, Day8::part2)
+    //executeWithInput("inputDay8.txt", Day8::part1, Day8::part2)
+    executeWithInput("inputDay9.txt", Day9::part1, Day9::part2)
 
 }
 
