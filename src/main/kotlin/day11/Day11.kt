@@ -1,22 +1,40 @@
 package day11
 
+import java.math.BigDecimal
+import java.math.RoundingMode
 import java.util.*
-import kotlin.math.floor
 
 object Day11 {
-    fun part1(input: String): Int {
+    fun part1(input: String): Long {
+        return inspectedItems(input, 20, 3)
+    }
+
+    fun part2(input: String): Long {
+        return inspectedItems(input, 10_000, 1)
+    }
+
+    private fun inspectedItems(input: String, rounds: Int, reliefFactor: Int): Long {
         val monkeys = input.split("\n\n").map {
             val lines = it.split("\n").drop(1)
             val items =
-                lines.first().trim().removePrefix("Starting items:").trim().split("\\s?,\\s?".toRegex()).map(String::toInt)
+                lines.first().trim().removePrefix("Starting items:").trim().split("\\s?,\\s?".toRegex())
+                    .map(String::toBigDecimal)
             val (operator, value) = lines[1].trim().removePrefix("Operation: new = old").trim().split(" ")
-            val operation = if(operator == "+") {
-                { old: Int ->
-                    old +  try { value.toInt() } catch (e: NumberFormatException) { old }
+            val operation = if (operator == "+") {
+                { old: BigDecimal ->
+                    old + try {
+                        value.toBigDecimal()
+                    } catch (e: NumberFormatException) {
+                        old
+                    }
                 }
             } else {
-                { old: Int ->
-                    old * try { value.toInt() } catch (e: NumberFormatException) { old }
+                { old: BigDecimal ->
+                    old * try {
+                        value.toBigDecimal()
+                    } catch (e: NumberFormatException) {
+                        old
+                    }
                 }
             }
             val divisibleBy = lines[2].trim().split(" ").last().toInt()
@@ -25,10 +43,13 @@ object Day11 {
             Monkey(LinkedList(items), monkeyIdTrue, monkeyIdFalse, divisibleBy, operation)
         }
 
-        repeat(20) {
+        val gcd = monkeys.map { it.divisibleBy }.reduce { acc, value ->
+            value * acc
+        }
+        repeat(rounds) {
             monkeys.forEach { monkey ->
-                while(monkey.hasItems()) {
-                    val thrownItem = monkey.throwItem()
+                while (monkey.hasItems()) {
+                    val thrownItem = monkey.throwItem(reliefFactor, gcd)
                     monkeys[thrownItem.monkeyId].addItem(thrownItem.value)
                 }
             }
@@ -36,39 +57,35 @@ object Day11 {
         val topmostMonkeys = monkeys.sortedByDescending(Monkey::inspectedItems).take(2)
         return topmostMonkeys[0].inspectedItems * topmostMonkeys[1].inspectedItems
     }
-
-    fun part2(input: String): Int {
-        return 14
-    }
 }
 
 
 class Monkey(
-    private val items: LinkedList<Int>,
+    private val items: LinkedList<BigDecimal>,
     private val monkeyTrueId: Int,
     private val monkeyFalseId: Int,
-    private val divisibleBy: Int,
-    private val operation: (Int) -> Int,
-    var inspectedItems: Int = 0
+    val divisibleBy: Int,
+    private val operation: (BigDecimal) -> BigDecimal,
+    var inspectedItems: Long = 0
 ) {
 
-    fun throwItem(): ThrowItem {
+    fun throwItem(reliefFactor: Int, mod: Int): ThrowItem {
         val item = items.remove()
         inspectedItems++
-        val newWorryLevelItem = operation(item).toDouble()
-        val reducedWorryLevelItem = floor(newWorryLevelItem / 3).toInt()
+        val newWorryLevelItem = operation(item)
+        val reducedWorryLevelItem = newWorryLevelItem.divide(reliefFactor.toBigDecimal(), RoundingMode.DOWN)
         val throwToMonkeyId =
-            if(reducedWorryLevelItem % divisibleBy == 0) {
+            if(reducedWorryLevelItem.remainder(divisibleBy.toBigDecimal()) == BigDecimal.ZERO) {
                 monkeyTrueId
             } else {
                 monkeyFalseId
             }
-        return ThrowItem(reducedWorryLevelItem, throwToMonkeyId)
+        return ThrowItem(reducedWorryLevelItem.remainder(BigDecimal(mod)), throwToMonkeyId)
     }
 
     fun hasItems() = !items.isEmpty()
 
-    fun addItem(item: Int) = items.add(item)
+    fun addItem(item: BigDecimal) = items.add(item)
     override fun toString(): String {
         return "Monkey(items=$items, monkeyTrueId=$monkeyTrueId, monkeyFalseId=$monkeyFalseId, divisibleBy=$divisibleBy, operation=$operation, inspectedItems=$inspectedItems)"
     }
@@ -76,4 +93,4 @@ class Monkey(
 
 }
 
-data class ThrowItem(val value: Int, val monkeyId: Int)
+data class ThrowItem(val value: BigDecimal, val monkeyId: Int)

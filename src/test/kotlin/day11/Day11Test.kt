@@ -11,6 +11,13 @@ class Day11Test {
         assertThat(result).isEqualTo(10605)
     }
 
+    @Test
+    fun `part 2`() {
+        val result = Day11.part2(inputPart1)
+
+        assertThat(result).isEqualTo(2713310158)
+    }
+
     private val inputPart1 = """
         Monkey 0:
           Starting items: 79, 98
