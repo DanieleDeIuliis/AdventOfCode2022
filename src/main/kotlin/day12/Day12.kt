@@ -5,19 +5,27 @@ import kotlin.math.absoluteValue
 
 object Day12 {
     fun part1(input: String): Int {
-        val heightMap = computeHeighMap(input)
-        return bfs(heightMap)
+        val heightMap = computeHeightMap(input)
+        return simpleBfs(heightMap)
     }
 
     fun part2(input: String): Int {
-        return computeHeighMaps(input).map { bfs(it) }.filter { it > 0 }.min()
+        return bfsFromAllStarts(computeHeightMap(input))
     }
 
-    private fun bfs(heightMap: HeightMap): Int {
+    private fun simpleBfs(heightMap: HeightMap): Int {
+        return bfs(heightMap.matrix, heightMap.startPositions.first(), heightMap.end)
+    }
+
+    private fun bfsFromAllStarts(heightMap: HeightMap): Int {
+        return heightMap.startPositions.map { bfs(heightMap.matrix, it, heightMap.end) }.filter { it > 0 }.min()
+    }
+
+    private fun bfs(matrix: Array<IntArray>, start: Position, end: Position): Int {
         val toVisit = LinkedList<Position?>()
-        toVisit.add(heightMap.start)
+        toVisit.add(start)
         toVisit.add(null)
-        val visited = mutableSetOf(heightMap.start)
+        val visited = mutableSetOf(start)
         var level = 1
         while (toVisit.isNotEmpty()) {
             if (toVisit.peek() == null) {
@@ -26,8 +34,8 @@ object Day12 {
             }
             while (toVisit.peek() != null) {
                 val current = toVisit.remove()!!
-                val children = current.next(heightMap.matrix)
-                if (children.any { it == heightMap.end }) {
+                val children = current.next(matrix)
+                if (children.any { it == end }) {
                     return level
                 }
 
@@ -40,14 +48,14 @@ object Day12 {
         return -1
     }
 
-    private fun computeHeighMap(input: String): HeightMap {
-        lateinit var start: Position
+    private fun computeHeightMap(input: String): HeightMap {
+        lateinit var  originalStart: Position
         lateinit var end: Position
         val matrix = input.split("\n").mapIndexed { row, line ->
             line.mapIndexed { col, letter ->
                 when (letter) {
                     'S' -> {
-                        start = Position(row, col)
+                        originalStart = Position(row,col)
                         0
                     }
                     'E' -> {
@@ -58,34 +66,19 @@ object Day12 {
                 }
             }.toIntArray()
         }.toTypedArray()
-        return HeightMap(matrix, start, end)
-    }
-
-    private fun computeHeighMaps(input: String): List<HeightMap> {
-        lateinit var end: Position
-        val matrix = input.split("\n").mapIndexed { row, line ->
-            line.mapIndexed { col, letter ->
-                when (letter) {
-                    'S' -> {
-                        0
-                    }
-                    'E' -> {
-                        end = Position(row, col)
-                        'z' - 'a'
-                    }
-                    else -> letter - 'a'
-                }
-            }.toIntArray()
-        }.toTypedArray()
-        val maps = mutableListOf<HeightMap>()
-        matrix.forEachIndexed { rowIndex, row ->
-            row.forEachIndexed { colIndex, value ->
+        val startPositions = matrix.flatMapIndexed { rowIndex, row ->
+            row.mapIndexed { colIndex, value ->
                 if(value == 0) {
-                    maps.add(HeightMap(matrix, Position(rowIndex, colIndex), end))
+                    Position(rowIndex, colIndex)
+                } else {
+                    null
                 }
-            }
-        }
-        return maps
+            }.filterNotNull()
+        }.toMutableList()
+
+        startPositions.remove(originalStart)
+        startPositions.add(0, originalStart)
+        return HeightMap(matrix, startPositions, end)
     }
 }
 
@@ -123,13 +116,6 @@ private fun Array<IntArray>.canMove(position: Position, toRow: Int, toColumn: In
     return positionValue > toValue || (toValue - positionValue).absoluteValue <= 1
 }
 
-data class HeightMap(val matrix: Array<IntArray>, val start: Position, val end: Position) {
-
-    override fun toString(): String {
-        return "HeightMap(matrix=${matrix.forEach { println(it.joinToString(separator = " ")) }}, start=$start, end=$end)"
-    }
-
-
-}
+data class HeightMap(val matrix: Array<IntArray>, val startPositions: List<Position>, val end: Position)
 
 data class Position(val row: Int, val column: Int)
