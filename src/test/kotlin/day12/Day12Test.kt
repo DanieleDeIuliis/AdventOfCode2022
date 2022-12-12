@@ -18,4 +18,19 @@ class Day12Test {
 
         assertThat(result).isEqualTo(31)
     }
+
+    @Test
+    fun `part 2`() {
+        val input = """
+            Sabqponm
+            abcryxxl
+            accszExk
+            acctuvwj
+            abdefghi
+        """.trimIndent()
+
+        val result = Day12.part2(input)
+
+        assertThat(result).isEqualTo(29)
+    }
 }
