@@ -5,12 +5,12 @@ import kotlin.math.absoluteValue
 
 object Day12 {
     fun part1(input: String): Int {
-        val heightMap = computeHeighMap(input).first()
+        val heightMap = computeHeighMap(input)
         return bfs(heightMap)
     }
 
     fun part2(input: String): Int {
-        return computeHeighMap(input).map { bfs(it) }.filter { it > 0 }.min()
+        return computeHeighMaps(input).map { bfs(it) }.filter { it > 0 }.min()
     }
 
     private fun bfs(heightMap: HeightMap): Int {
@@ -40,7 +40,28 @@ object Day12 {
         return -1
     }
 
-    private fun computeHeighMap(input: String): List<HeightMap> {
+    private fun computeHeighMap(input: String): HeightMap {
+        lateinit var start: Position
+        lateinit var end: Position
+        val matrix = input.split("\n").mapIndexed { row, line ->
+            line.mapIndexed { col, letter ->
+                when (letter) {
+                    'S' -> {
+                        start = Position(row, col)
+                        0
+                    }
+                    'E' -> {
+                        end = Position(row, col)
+                        'z' - 'a'
+                    }
+                    else -> letter - 'a'
+                }
+            }.toIntArray()
+        }.toTypedArray()
+        return HeightMap(matrix, start, end)
+    }
+
+    private fun computeHeighMaps(input: String): List<HeightMap> {
         lateinit var end: Position
         val matrix = input.split("\n").mapIndexed { row, line ->
             line.mapIndexed { col, letter ->
