@@ -5,21 +5,29 @@ import kotlin.math.absoluteValue
 
 object Day12 {
     fun part1(input: String): Int {
-        val heightMap = computeHeighMap(input)
+        val heightMap = computeHeighMap(input).first()
+        return bfs(heightMap)
+    }
+
+    fun part2(input: String): Int {
+        return computeHeighMap(input).map { bfs(it) }.filter { it > 0 }.min()
+    }
+
+    private fun bfs(heightMap: HeightMap): Int {
         val toVisit = LinkedList<Position?>()
         toVisit.add(heightMap.start)
         toVisit.add(null)
         val visited = mutableSetOf(heightMap.start)
         var level = 1
-        while(toVisit.isNotEmpty()) {
-            if(toVisit.peek() == null) {
+        while (toVisit.isNotEmpty()) {
+            if (toVisit.peek() == null) {
                 toVisit.remove()
                 continue
             }
-            while(toVisit.peek() != null) {
+            while (toVisit.peek() != null) {
                 val current = toVisit.remove()!!
                 val children = current.next(heightMap.matrix)
-                if(children.any { it == heightMap.end }) {
+                if (children.any { it == heightMap.end }) {
                     return level
                 }
 
@@ -32,31 +40,31 @@ object Day12 {
         return -1
     }
 
-    private fun computeHeighMap(input: String): HeightMap {
-        lateinit var start: Position
+    private fun computeHeighMap(input: String): List<HeightMap> {
         lateinit var end: Position
         val matrix = input.split("\n").mapIndexed { row, line ->
             line.mapIndexed { col, letter ->
                 when (letter) {
                     'S' -> {
-                        start = Position(row, col)
                         0
                     }
-
                     'E' -> {
                         end = Position(row, col)
                         'z' - 'a'
                     }
-
                     else -> letter - 'a'
                 }
             }.toIntArray()
         }.toTypedArray()
-        return HeightMap(matrix, start, end)
-    }
-
-    fun part2(input: String): Int {
-        return 124
+        val maps = mutableListOf<HeightMap>()
+        matrix.forEachIndexed { rowIndex, row ->
+            row.forEachIndexed { colIndex, value ->
+                if(value == 0) {
+                    maps.add(HeightMap(matrix, Position(rowIndex, colIndex), end))
+                }
+            }
+        }
+        return maps
     }
 }
 
